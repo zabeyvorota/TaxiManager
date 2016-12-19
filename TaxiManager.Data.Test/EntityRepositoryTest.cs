@@ -226,6 +226,7 @@ namespace TaxiManager.Data.Test
             }
             catch (InvalidDataException)
             {
+
             }
             repository.DeleteEntity(agent1, entity, EntityType.Driver);
             guids = repository.GetEntitys(agent1, EntityType.Driver);

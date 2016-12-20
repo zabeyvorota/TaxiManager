@@ -63,7 +63,7 @@ namespace TaxiManager.Data.EntityFramework
                             {
                                 //Получаем все что доступно вниз по уровню иерархии агентов
                                 List<Guid> childAgentGuids;
-                                if (agentGuids.TryGetValue(type, out childAgentGuids))
+                                if (entityChildAgents.TryGetValue(type, out childAgentGuids))
                                 {
                                     guids.AddRange(childAgentGuids);
                                 }
@@ -143,14 +143,15 @@ namespace TaxiManager.Data.EntityFramework
             var delEntityGuid = _dataContext.EntityGuids.FirstOrDefault(_ => _.EntityGuid == delGuid);
             if (delEntityGuid == null)
                 throw new InvalidDataException(string.Format("EntityGuid with Guid {0} not found", delGuid));
-            if (agentGuid != delEntityGuid.AgentGuid)
+           var agents= GetEntitys(agentGuid, EntityType.Agent);
+           if (agentGuid != delEntityGuid.AgentGuid && !agents.Contains(delEntityGuid.AgentGuid))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, type, delGuid));
             if (type != delEntityGuid.EntityType)
                 throw new InvalidDataException(string.Format("EntityGuid with Guid {0} not valid", agentGuid));
 
             delEntityGuid.IsDelete = true;
             _dataContext.SaveChanges();
-            UpdateCache(agentGuid, type, new List<Guid>(), new List<Guid> { delGuid });
+            UpdateCache(delEntityGuid.AgentGuid, type, new List<Guid>(), new List<Guid> { delGuid });
             _logger.Info(string.Format("Delete item EntityGuids. agentGuid: {0}, delGuid: {1}, type:{2}", agentGuid, delGuid, type));
         }
 

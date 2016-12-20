@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 
@@ -64,6 +63,14 @@ namespace TaxiManager.Data.Test
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
             IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+            
             repository.AddEntity(Guid.NewGuid(), Guid.NewGuid(), EntityType.Car);
             mockSet.Verify(m => m.Add(It.IsAny<EntityGuids>()), Times.Once());
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
@@ -78,15 +85,16 @@ namespace TaxiManager.Data.Test
             IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
             repository.AddEntity(agent, entity, EntityType.Car);
-            var data = new List<EntityGuids>
-            {
-                new EntityGuids {AgentGuid = agent, EntityGuid = entity, EntityType = EntityType.Car},
-            }.AsQueryable();
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+
+            repository.DeleteEntity(agent, entity, EntityType.Car);
         }
 
         [ExpectedException(typeof(InvalidDataException))]
@@ -162,18 +170,14 @@ namespace TaxiManager.Data.Test
             IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
             repository.AddEntity(agent, entity, EntityType.Car);
-            mockSet.Verify(m => m.Add(It.IsAny<EntityGuids>()), Times.Once());
-            mockContext.Verify(m => m.SaveChanges(), Times.Once());
-            var data = new List<EntityGuids>
-            {
-                new EntityGuids {AgentGuid = Guid.NewGuid(), EntityGuid = entity, EntityType = EntityType.Car},
-            }.AsQueryable();
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-
             repository.DeleteEntity(Guid.NewGuid(), entity, EntityType.Car);
         }
 
@@ -191,26 +195,14 @@ namespace TaxiManager.Data.Test
             var entity2 = Guid.NewGuid();
             var entity3 = Guid.NewGuid();
 
-            var data = new List<EntityGuids>
-            {
-                //new EntityGuids {AgentGuid = agent, EntityGuid = entity, EntityType = EntityType.Car},
-                //new EntityGuids {AgentGuid = agent1, EntityGuid = entity1, EntityType = EntityType.Car},
-                //new EntityGuids {AgentGuid = agent1, EntityGuid = entity3, EntityType = EntityType.Driver},
-                //new EntityGuids {AgentGuid = agent1, EntityGuid = entity2, EntityType = EntityType.Driver},
-            };
+            var data = new List<EntityGuids>();
             var queryable = data.AsQueryable();
             mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
             mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
             mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
             mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
-            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>((s) => data.Add(s));
-            //mockSet.Setup(d => d.AddOrUpdate(It.IsAny<EntityGuids>())).Callback<EntityGuids>((s) =>
-            //{
-            //    var exist = data.FirstOrDefault(_ => _ == s);
-            //    if (exist == null)
-            //        data.Add(s);
-
-            //});
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+          
             repository.AddEntity(agent, entity, EntityType.Car);
             repository.AddEntity(agent1, entity1, EntityType.Car);
 
@@ -220,8 +212,6 @@ namespace TaxiManager.Data.Test
             guids = repository.GetEntitys(agent1, EntityType.Car);
             Assert.AreEqual(1, guids.Count);
             Assert.AreEqual(entity1, guids[0]);
-
-
 
             repository.DeleteEntity(agent, entity, EntityType.Car);
             guids = repository.GetEntitys(agent, EntityType.Car);
@@ -253,6 +243,97 @@ namespace TaxiManager.Data.Test
             repository.DeleteEntity(agent1, entity2, EntityType.Driver);
             guids = repository.GetEntitys(agent1, EntityType.Driver);
             Assert.AreEqual(0, guids.Count);
+        }
+
+        [TestMethod]
+        public void GetEntitys_Hierarchy()
+        {
+            var mockSet = new Mock<DbSet<EntityGuids>>();
+            var mockContext = new Mock<ApplicationContext>();
+            mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var agent = Guid.NewGuid();
+            var entity = Guid.NewGuid();
+            var agent1 = Guid.NewGuid();
+            var entity1 = Guid.NewGuid();
+            var entity2 = Guid.NewGuid();
+            var entity3 = Guid.NewGuid();
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+
+            repository.AddEntity(agent, entity, EntityType.Driver);
+            repository.AddEntity(agent, agent1, EntityType.Agent);
+            repository.AddEntity(agent1, entity1, EntityType.Driver);
+            repository.AddEntity(agent1, entity2, EntityType.Car);
+            repository.AddEntity(agent1, entity3, EntityType.Car);
+
+            var agents=repository.GetEntitys(agent, EntityType.Agent);
+            Assert.AreEqual(1, agents.Count);
+            Assert.AreEqual(agent1, agents[0]);
+
+            var drivers = repository.GetEntitys(agent, EntityType.Driver);
+            Assert.AreEqual(2, drivers.Count);
+            Assert.AreEqual(entity, drivers[1]);
+            Assert.AreEqual(entity1, drivers[0]);
+
+            drivers = repository.GetEntitys(agent1, EntityType.Driver);
+            Assert.AreEqual(1, drivers.Count);
+            Assert.AreEqual(entity1, drivers[0]);
+
+            var cars = repository.GetEntitys(agent1, EntityType.Car);
+            Assert.AreEqual(2, cars.Count);
+            Assert.AreEqual(entity2, cars[0]);
+            Assert.AreEqual(entity3, cars[1]);
+
+            cars = repository.GetEntitys(agent, EntityType.Car);
+            Assert.AreEqual(2, cars.Count);
+            Assert.AreEqual(entity2, cars[0]);
+            Assert.AreEqual(entity3, cars[1]);
+
+            repository.DeleteEntity(agent, entity3, EntityType.Car);
+
+            cars = repository.GetEntitys(agent1, EntityType.Car);
+            Assert.AreEqual(1, cars.Count);
+            Assert.AreEqual(entity2, cars[0]);
+
+            cars = repository.GetEntitys(agent, EntityType.Car);
+            Assert.AreEqual(1, cars.Count);
+            Assert.AreEqual(entity2, cars[0]);
+
+            repository.DeleteEntity(agent1, entity1, EntityType.Driver);
+
+            drivers = repository.GetEntitys(agent, EntityType.Driver);
+            Assert.AreEqual(1, drivers.Count);
+            Assert.AreEqual(entity, drivers[0]);
+
+            drivers = repository.GetEntitys(agent1, EntityType.Driver);
+            Assert.AreEqual(0, drivers.Count);
+
+            repository.DeleteEntity(agent1, entity2, EntityType.Car);
+
+            cars = repository.GetEntitys(agent1, EntityType.Car);
+            Assert.AreEqual(0, cars.Count);
+
+            cars = repository.GetEntitys(agent, EntityType.Car);
+            Assert.AreEqual(0, cars.Count);
+
+            repository.DeleteEntity(agent, entity, EntityType.Driver);
+
+            drivers = repository.GetEntitys(agent, EntityType.Driver);
+            Assert.AreEqual(0, drivers.Count);
+
+            drivers = repository.GetEntitys(agent1, EntityType.Driver);
+            Assert.AreEqual(0, drivers.Count);
+
+            repository.DeleteEntity(agent, agent1, EntityType.Agent);
+
+             agents = repository.GetEntitys(agent, EntityType.Agent);
+            Assert.AreEqual(0, agents.Count);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.IO;
 using System.Threading;
 
@@ -82,12 +83,12 @@ namespace TaxiManager.Data.EntityFramework
 
             //получаем идентификаторы агентов
             var childAgentsGuids = from eg in _dataContext.EntityGuids
-                where eg.AgentGuid == agentGuid && eg.EntityType == EntityType.Agent && !eg.IsDelete
-                select eg.AgentGuid;
+                                   where eg.AgentGuid == agentGuid && eg.EntityType == EntityType.Agent && !eg.IsDelete
+                                   select eg.AgentGuid;
             //Получаем все что доступно вниз по уровню иерархии агентов
             guids = (from eg in _dataContext.EntityGuids
-                where (childAgentsGuids.Contains(eg.AgentGuid) || eg.AgentGuid == agentGuid) && eg.EntityType == type && !eg.IsDelete
-                select eg.AgentGuid).ToList();
+                     where (childAgentsGuids.Contains(eg.AgentGuid) || eg.AgentGuid == agentGuid) && eg.EntityType == type && !eg.IsDelete
+                     select eg.EntityGuid).ToList();
 
             UpdateCache(agentGuid, type, guids, new List<Guid>());
             return guids;
@@ -105,6 +106,11 @@ namespace TaxiManager.Data.EntityFramework
                 throw new InvalidDataException(string.Format("Invalid agentGuid {0}", agentGuid));
             if (newGuid == Guid.Empty)
                 throw new InvalidDataException(string.Format("Invalid newGuid {0}", newGuid));
+            var existEntity = (from eg in _dataContext.EntityGuids
+                               where newGuid == eg.EntityGuid
+                               select eg).FirstOrDefault();
+            if (existEntity != null)
+                throw new InvalidDataException(string.Format("Guid {0} exist", newGuid));
             var utc = DateTime.UtcNow;
             _dataContext.EntityGuids.Add(new EntityGuids
             {
@@ -117,8 +123,9 @@ namespace TaxiManager.Data.EntityFramework
             });
 
             _dataContext.SaveChanges();
-            UpdateCache(agentGuid, type, new List<Guid> {newGuid}, new List<Guid>());
-            _logger.Info(string.Format("Add new EntityGuids. agentGuid: {0}, newGuid: {1}, type:{2}", agentGuid, newGuid, type));
+            UpdateCache(agentGuid, type, new List<Guid> { newGuid }, new List<Guid>());
+            _logger.Info(string.Format("Add new EntityGuids. agentGuid: {0}, newGuid: {1}, type:{2}", agentGuid, newGuid,
+                type));
         }
 
         /// <summary>
@@ -142,9 +149,8 @@ namespace TaxiManager.Data.EntityFramework
                 throw new InvalidDataException(string.Format("EntityGuid with Guid {0} not valid", agentGuid));
 
             delEntityGuid.IsDelete = true;
-            _dataContext.Entry(delEntityGuid).State = EntityState.Modified;
             _dataContext.SaveChanges();
-            UpdateCache(agentGuid, type, new List<Guid>(), new List<Guid> {delGuid});
+            UpdateCache(agentGuid, type, new List<Guid>(), new List<Guid> { delGuid });
             _logger.Info(string.Format("Delete item EntityGuids. agentGuid: {0}, delGuid: {1}, type:{2}", agentGuid, delGuid, type));
         }
 
@@ -170,7 +176,7 @@ namespace TaxiManager.Data.EntityFramework
                 else
                 {
                     guids = new List<Guid>(addGuids);
-                    agentGuids = new Dictionary<EntityType, List<Guid>> {{type, guids}};
+                    agentGuids = new Dictionary<EntityType, List<Guid>> { { type, guids } };
                     _cache.Add(agentGuid, agentGuids);
                 }
 

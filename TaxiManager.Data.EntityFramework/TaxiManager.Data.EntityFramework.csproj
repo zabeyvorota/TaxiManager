@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="EntityFrameworkAgentRepository.cs" />
     <Compile Include="EntityFrameworkEntityRepository.cs" />
     <Compile Include="EntityFrameworkRightRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

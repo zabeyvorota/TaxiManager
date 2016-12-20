@@ -240,5 +240,17 @@ namespace TaxiManager.Data.Test
             {
             }
         }
+      
+        [ExpectedException(typeof(InvalidDataException))]
+        [TestMethod]
+        public void GetRights_AgentEmpty()
+        {
+            var mockSet = new Mock<DbSet<EntityGuids>>();
+            var mockContext = new Mock<ApplicationContext>();
+            mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
+            IEntityRepository entityFrameworkEntityRepository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var repository = new EntityFrameworkRightRepository(new NLogLoggerPlugin(), mockContext.Object, entityFrameworkEntityRepository);
+            repository.GetRights(Guid.Empty, EntityType.Agent);
+        }
     }
 }

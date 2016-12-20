@@ -11,6 +11,8 @@ namespace TaxiManager.Data.EntityFramework
     {
         public virtual DbSet<EntityGuids> EntityGuids { get; set; }
 
+        public virtual DbSet<Right> Rights { get; set; }
+
         public ApplicationContext()
             : base("TaxiManager")
         {

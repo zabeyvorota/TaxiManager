@@ -33,5 +33,10 @@ namespace TaxiManager.Data
         /// <param name="delGuid"></param>
         /// <param name="type"></param>
         void DeleteEntity(Guid agentGuid, Guid delGuid, EntityType type);
+
+        /// <summary>
+        /// Функция проверяет наличие сущности в системе
+        /// </summary>
+        bool Exist(Guid agentGuid, Guid entity, EntityType type);
     }
 }

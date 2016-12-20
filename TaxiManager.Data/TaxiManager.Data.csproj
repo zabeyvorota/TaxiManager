@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="IEntityRepository.cs" />
+    <Compile Include="IRightRepository.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\Driver.cs" />
@@ -39,6 +40,8 @@
     <Compile Include="Model\EntityGuids.cs" />
     <Compile Include="Model\EntityInfoAttribute.cs" />
     <Compile Include="Model\EntityType.cs" />
+    <Compile Include="Model\OperationType.cs" />
+    <Compile Include="Model\Right.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

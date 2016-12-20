@@ -335,5 +335,76 @@ namespace TaxiManager.Data.Test
              agents = repository.GetEntitys(agent, EntityType.Agent);
             Assert.AreEqual(0, agents.Count);
         }
+
+        [TestMethod]
+        public void Exist()
+        {
+            var mockSet = new Mock<DbSet<EntityGuids>>();
+            var mockContext = new Mock<ApplicationContext>();
+            mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var agent = Guid.NewGuid();
+            var entity = Guid.NewGuid();
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+
+            repository.AddEntity(agent, entity, EntityType.Driver);
+
+            var result = repository.Exist(agent, entity, EntityType.Agent);
+            Assert.AreEqual(false, result);
+
+            result = repository.Exist(agent, entity, EntityType.Driver);
+            Assert.AreEqual(true, result);
+
+            repository.DeleteEntity(agent, entity, EntityType.Driver);
+
+            result = repository.Exist(agent, entity, EntityType.Driver);
+            Assert.AreEqual(false, result);
+        }
+
+        [ExpectedException(typeof(InvalidDataException))]
+        [TestMethod]
+        public void Exist_AgentEmpty()
+        {
+            var mockSet = new Mock<DbSet<EntityGuids>>();
+            var mockContext = new Mock<ApplicationContext>();
+            mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var agent = Guid.Empty;
+            var entity = Guid.NewGuid();
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+            repository.Exist(agent, entity, EntityType.Car);
+        }
+
+        [ExpectedException(typeof(InvalidDataException))]
+        [TestMethod]
+        public void Exist_EntityEmpty()
+        {
+            var mockSet = new Mock<DbSet<EntityGuids>>();
+            var mockContext = new Mock<ApplicationContext>();
+            mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            var agent = Guid.NewGuid();
+            var entity = Guid.Empty;
+            var data = new List<EntityGuids>();
+            var queryable = data.AsQueryable();
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            mockSet.Setup(d => d.Add(It.IsAny<EntityGuids>())).Callback<EntityGuids>(s => data.Add(s));
+            repository.Exist(agent, entity, EntityType.Car);
+        }
     }
 }

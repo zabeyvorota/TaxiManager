@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Threading;
 
@@ -44,6 +42,8 @@ namespace TaxiManager.Data.EntityFramework
         /// <returns></returns>
         public IList<Guid> GetEntitys(Guid agentGuid, EntityType type)
         {
+            if (agentGuid == Guid.Empty)
+                throw new InvalidDataException(string.Format("Invalid agentGuid {0}", agentGuid));
             List<Guid> guids = new List<Guid>();
             //Поиск в кеше
             using (_lock.UseReadLock())
@@ -153,6 +153,19 @@ namespace TaxiManager.Data.EntityFramework
             _dataContext.SaveChanges();
             UpdateCache(delEntityGuid.AgentGuid, type, new List<Guid>(), new List<Guid> { delGuid });
             _logger.Info(string.Format("Delete item EntityGuids. agentGuid: {0}, delGuid: {1}, type:{2}", agentGuid, delGuid, type));
+        }
+  
+        /// <summary>
+        /// Функция проверяет наличие сущности в системе
+        /// </summary>
+        public bool Exist(Guid agentGuid, Guid entity, EntityType type)
+        {
+            if (entity == Guid.Empty)
+                throw new InvalidDataException(string.Format("Invalid entity {0}", entity));
+            if (agentGuid == Guid.Empty)
+                throw new InvalidDataException(string.Format("Invalid agentGuid {0}", agentGuid));
+            var entitys = GetEntitys(agentGuid, type);
+            return entitys.Contains(entity);
         }
 
         private void UpdateCache(Guid agentGuid, EntityType type,

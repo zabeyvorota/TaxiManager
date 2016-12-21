@@ -13,7 +13,7 @@ namespace TaxiManager.Data
         /// <summary>
         /// Метод добавляет нового или обновляет существующего агента
         /// </summary>
-        void AddOrUpdateAgent(Guid agentGuid, Agent agent);
+        Agent AddOrUpdateAgent(Guid agentGuid, Agent agent);
         
         /// <summary>
         /// Метод удаляет существующего агента

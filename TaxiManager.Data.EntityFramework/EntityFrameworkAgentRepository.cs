@@ -50,7 +50,7 @@ namespace TaxiManager.Data.EntityFramework
         /// <summary>
         /// Метод добавляет нового или обновляет существующего агента
         /// </summary>
-        public void AddOrUpdateAgent(Guid agentGuid, Agent agent)
+        public Agent AddOrUpdateAgent(Guid agentGuid, Agent agent)
         {
             if (agentGuid == Guid.Empty)
                 throw new InvalidDataException(string.Format("Invalid agentGuid {0}", agentGuid));
@@ -59,8 +59,9 @@ namespace TaxiManager.Data.EntityFramework
             if (string.IsNullOrEmpty(agent.Name))
                 throw new InvalidDataException(string.Format("Invalid agent.Name   {0}", agent.Name));
             var operations = _rightRepository.GetRights(agentGuid, EntityType.Agent);
-            if (!operations.Contains(OperationType.AddOrUpdate))
+            if (!operations.Contains(OperationType.AddOrUpdate) && !operations.Contains(OperationType.Admin))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to add or update {1} {2}", agentGuid, EntityType.Agent, agent.Guid));
+            Agent result;
             var dt = DateTime.UtcNow;
             var updateList = new List<Agent>();
             var addList = new List<Agent>();
@@ -74,21 +75,24 @@ namespace TaxiManager.Data.EntityFramework
                 _entityRepository.AddEntity(agentGuid, agent.Guid, EntityType.Agent);
                 addList.Add(agent);
                 _logger.Info(string.Format("Add new agent {0}. Owner {1}", agent.Guid, agentGuid));
+                result = agent;
             }
             else
             {
                 if (agent.Guid == Guid.Empty)
                     throw new InvalidDataException(string.Format("Invalid agent.Guid   {0}", agent.Guid));
-                if (agent.Id <= 0)
-                    throw new InvalidDataException(string.Format("Invalid agent.Id  {0}", agent.Id));
+                if (!_entityRepository.Exist(agentGuid, agent.Guid, EntityType.Agent))
+                    throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, EntityType.Agent, agent.Guid));
                 existAgent.Name = agent.Name;
                 existAgent.Description = agent.Description;
                 existAgent.UpdateTime = dt;
                 updateList.Add(existAgent);
                 _logger.Info(string.Format("Update agent {0}. Owner {1}", agent.Guid, agentGuid));
+                result = agent;
             }
             _dataContext.SaveChanges();
             UpdateCache(addList,updateList, new List<Agent>());
+            return result;
         }
 
         /// <summary>
@@ -102,16 +106,14 @@ namespace TaxiManager.Data.EntityFramework
                 throw new InvalidDataException("Agent is null");
             if (agent.Id <= 0)
                 throw new InvalidDataException(string.Format("Invalid agent.Id  {0}", agent.Id));
-            if (string.IsNullOrEmpty(agent.Name))
-                throw new InvalidDataException(string.Format("Invalid agent.Name   {0}", agent.Name));
             if (agent.Guid == Guid.Empty)
                 throw new InvalidDataException(string.Format("Invalid agent.Guid   {0}", agent.Guid));
             if (!_entityRepository.Exist(agentGuid, agent.Guid, EntityType.Agent))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, EntityType.Agent, agent.Guid));
             var operations = _rightRepository.GetRights(agentGuid, EntityType.Agent);
-            if (!operations.Contains(OperationType.Delete))
+            if (!operations.Contains(OperationType.Delete) && !operations.Contains(OperationType.Admin))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to delete {1} {2}", agentGuid, EntityType.Agent, agent.Guid));
-            var deletedAgent = _dataContext.Agents.First(_ => _.Guid == agentGuid);
+            var deletedAgent = _dataContext.Agents.Find(agent.Id);
             deletedAgent.IsDelete = true;
             _entityRepository.DeleteEntity(agentGuid, agent.Guid, EntityType.Agent);
             _dataContext.SaveChanges();

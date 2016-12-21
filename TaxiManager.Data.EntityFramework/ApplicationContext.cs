@@ -15,7 +15,9 @@ namespace TaxiManager.Data.EntityFramework
 
         public virtual DbSet<Agent> Agents { get; set; }
 
+        public virtual DbSet<Car> Cars { get; set; }
 
+        public virtual DbSet<Driver> Drivers { get; set; }
         public ApplicationContext()
             : base("TaxiManager")
         {

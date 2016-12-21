@@ -23,8 +23,7 @@ namespace TaxiManager.Data
         /// <summary>
         /// Метод возвращает список агентов по идентификаторам
         /// </summary>
-        /// <param name="guids"></param>
         /// <returns></returns>
-        IList<Agent> GetAgentsByGuids(IList<Guid> guids);
+        IList<Agent> GetAgentsByGuids(Guid agentGuid, IList<Guid> guids);
     }
 }

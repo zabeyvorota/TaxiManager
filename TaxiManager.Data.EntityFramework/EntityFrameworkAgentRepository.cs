@@ -123,14 +123,26 @@ namespace TaxiManager.Data.EntityFramework
         /// <summary>
         /// Метод возвращает список агентов по идентификаторам
         /// </summary>
-        /// <param name="guids"></param>
         /// <returns></returns>
-        public IList<Agent> GetAgentsByGuids(IList<Guid> guids)
+        public IList<Agent> GetAgentsByGuids(Guid agentGuid, IList<Guid> guids)
         {
+            if (agentGuid == Guid.Empty)
+                throw new InvalidDataException(string.Format("Invalid agentGuid {0}", agentGuid));
             if (guids == null)
                 throw new InvalidDataException("Guids is null");
             if (guids.Count == 0)
                 throw new InvalidDataException("Guids is empty");
+            for (int i = 0; i < guids.Count; i++)
+            {
+                var guid = guids[i];
+                if (!_entityRepository.Exist(agentGuid, guid, EntityType.Agent))
+                {
+                    throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, EntityType.Agent, guid));
+                }
+            }
+            var operations = _rightRepository.GetRights(agentGuid, EntityType.Agent);
+            if (!operations.Contains(OperationType.Select) && !operations.Contains(OperationType.Admin))
+                throw new InvalidDataException(string.Format("Agent {0} cannot access to select {1}", agentGuid, EntityType.Agent));
             var agents = new List<Agent>(guids.Count);
             var notFoundInCache = new List<Guid>();
             using (_lock.UseReadLock())

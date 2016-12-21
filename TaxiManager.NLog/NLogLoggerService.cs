@@ -4,16 +4,16 @@ using NLog;
 
 namespace TaxiManager.NLog
 {
-    public class NLogLoggerPlugin : Core.ILogger
+    public class NLogLoggerService : Core.ILogger
     {
         private readonly Logger _logger;
 
-        public NLogLoggerPlugin()
+        public NLogLoggerService()
         {
             _logger = LogManager.GetLogger("gsdn");
         }
 
-        public NLogLoggerPlugin(string logName)
+        public NLogLoggerService(string logName)
         {
             _logger = LogManager.GetLogger(logName);
         }

@@ -31,7 +31,7 @@ namespace TaxiManager.Data.Test
         [TestMethod]
         public void ArgumentNullException2()
         {
-            new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), null);
+            new EntityFrameworkEntityRepository(new NLogLoggerService(), null);
         }
 
         [ExpectedException(typeof(InvalidDataException))]
@@ -41,7 +41,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             repository.AddEntity(Guid.Empty, Guid.NewGuid(), EntityType.Car);
         }
 
@@ -52,7 +52,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             repository.AddEntity(Guid.NewGuid(), Guid.Empty, EntityType.Car);
         }
 
@@ -62,7 +62,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var data = new List<EntityGuids>();
             var queryable = data.AsQueryable();
             mockSet.As<IQueryable<EntityGuids>>().Setup(m => m.Provider).Returns(queryable.Provider);
@@ -82,7 +82,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var data = new List<EntityGuids>();
@@ -104,7 +104,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             repository.DeleteEntity(Guid.Empty, Guid.NewGuid(), EntityType.Car);
         }
 
@@ -115,7 +115,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             repository.DeleteEntity(Guid.NewGuid(), Guid.Empty, EntityType.Car);
         }
 
@@ -126,7 +126,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
 
             var data = new List<EntityGuids>
             {
@@ -146,7 +146,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var data = new List<EntityGuids>
@@ -167,7 +167,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var data = new List<EntityGuids>();
@@ -187,7 +187,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var agent1 = Guid.NewGuid();
@@ -251,7 +251,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var agent1 = Guid.NewGuid();
@@ -342,7 +342,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.NewGuid();
             var data = new List<EntityGuids>();
@@ -374,7 +374,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.Empty;
             var entity = Guid.NewGuid();
             var data = new List<EntityGuids>();
@@ -394,7 +394,7 @@ namespace TaxiManager.Data.Test
             var mockSet = new Mock<DbSet<EntityGuids>>();
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(m => m.EntityGuids).Returns(mockSet.Object);
-            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerPlugin(), mockContext.Object);
+            IEntityRepository repository = new EntityFrameworkEntityRepository(new NLogLoggerService(), mockContext.Object);
             var agent = Guid.NewGuid();
             var entity = Guid.Empty;
             var data = new List<EntityGuids>();

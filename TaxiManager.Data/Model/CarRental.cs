@@ -8,6 +8,11 @@ namespace TaxiManager.Data.Model
     public sealed class CarRental
     {
         /// <summary>
+        /// Свойство задает и возвращает первичный ключ (нужен для быстрой вставки РСУБД)
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// Свойство задающее и возвращающее идентификатор автомобиля
         /// </summary>
         public Guid CarGuid { get; set; }
@@ -31,5 +36,10 @@ namespace TaxiManager.Data.Model
         /// Свойство задающее и возвращающее время окончания аренды
         /// </summary>
         public DateTime EndRentalDate { get; set; }
+
+        /// <summary>
+        /// Свойство задает и возвращает маркер удаления аренды из системф
+        /// </summary>
+        public bool IsDelete { get; set; }
     }
 }

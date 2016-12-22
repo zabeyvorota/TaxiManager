@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="EntityFrameworkCarRentalRepository.cs" />
     <Compile Include="EntityFrameworkDriverRepository.cs" />
     <Compile Include="EntityFrameworkCarRepository.cs" />
     <Compile Include="EntityFrameworkAgentRepository.cs" />

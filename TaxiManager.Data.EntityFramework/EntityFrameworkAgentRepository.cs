@@ -135,6 +135,8 @@ namespace TaxiManager.Data.EntityFramework
             for (int i = 0; i < guids.Count; i++)
             {
                 var guid = guids[i];
+                if (agentGuid == guid)
+                    continue;//есть право на самого себя
                 if (!_entityRepository.Exist(agentGuid, guid, EntityType.Agent))
                 {
                     throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, EntityType.Agent, guid));

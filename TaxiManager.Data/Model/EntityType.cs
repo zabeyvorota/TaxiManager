@@ -4,6 +4,7 @@
     {
         Car,
         Driver,
-        Agent
+        Agent,
+        CarRental
     }
 }

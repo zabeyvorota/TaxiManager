@@ -29,7 +29,7 @@ namespace TaxiManager.Data.Model
         public DateTime UpdateTime { get; set; }
 
         /// <summary>
-        /// Свойство задает и возвращает маркер удаления сущноссти в системе
+        /// Свойство задает и возвращает маркер удаления сущности из системы
         /// </summary>
         public bool IsDelete { get; set; }
     }

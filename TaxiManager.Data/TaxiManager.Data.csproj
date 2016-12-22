@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ICarRentalRepository.cs" />
     <Compile Include="ICarRepository.cs" />
     <Compile Include="IAgentRepository.cs" />
     <Compile Include="IDriverRepository.cs" />

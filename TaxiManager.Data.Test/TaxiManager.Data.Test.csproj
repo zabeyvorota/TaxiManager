@@ -69,6 +69,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DriverRepositoryTest.cs" />
+    <Compile Include="CarRepositoryTest.cs" />
     <Compile Include="AgentRepositoryTest.cs" />
     <Compile Include="RightRepositoryTest.cs" />
     <Compile Include="EntityRepositoryTest.cs" />

@@ -12,7 +12,7 @@ namespace TaxiManager.Data.EntityFramework
     /// <summary>
     /// Класс описывающий реализацию репозитория водителей 
     /// </summary>
-    public sealed class EntityFrameworkDrivarRepository : IDriverRepository
+    public sealed class EntityFrameworkDriverRepository : IDriverRepository
     {
         private readonly ReaderWriterLockSlim _lock;
 
@@ -26,7 +26,7 @@ namespace TaxiManager.Data.EntityFramework
 
         private readonly ApplicationContext _dataContext;
 
-        public EntityFrameworkDrivarRepository(ILogger logger,
+        public EntityFrameworkDriverRepository(ILogger logger,
             IEntityRepository entityRepository,
             IRightRepository rightRepository,
             ApplicationContext dataContext)
@@ -120,7 +120,7 @@ namespace TaxiManager.Data.EntityFramework
                 throw new InvalidDataException(string.Format("Invalid driver.Guid   {0}", driver.Guid));
             if (!_entityRepository.Exist(agentGuid, driver.Guid, EntityType.Driver))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to object {1} {2}", agentGuid, EntityType.Driver, driver.Guid));
-            var operations = _rightRepository.GetRights(agentGuid, EntityType.Agent);
+            var operations = _rightRepository.GetRights(agentGuid, EntityType.Driver);
             if (!operations.Contains(OperationType.Delete) && !operations.Contains(OperationType.Admin))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to delete {1} {2}", agentGuid, EntityType.Driver, driver.Guid));
             var existDriver = _dataContext.Drivers.Find(driver.Id);

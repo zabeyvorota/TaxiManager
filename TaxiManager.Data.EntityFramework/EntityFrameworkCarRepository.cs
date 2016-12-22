@@ -57,8 +57,8 @@ namespace TaxiManager.Data.EntityFramework
             if (car == null)
                 throw new InvalidDataException("Car is null");
             if (string.IsNullOrEmpty(car.Number))
-                throw new InvalidDataException(string.Format("Invalid car.Name   {0}", car.Number));
-            var operations = _rightRepository.GetRights(agentGuid, EntityType.Driver);
+                throw new InvalidDataException(string.Format("Invalid car.Number   {0}", car.Number));
+            var operations = _rightRepository.GetRights(agentGuid, EntityType.Car);
             if (!operations.Contains(OperationType.AddOrUpdate) && !operations.Contains(OperationType.Admin))
                 throw new InvalidDataException(string.Format("Agent {0} cannot access to add or update {1} {2}", agentGuid, EntityType.Car, car.Guid));
             Car result;
